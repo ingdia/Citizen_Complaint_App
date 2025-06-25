@@ -26,7 +26,7 @@ const DashboardLayout = () => {
       }}
     >
       <Tabs.Screen
-        name="Home"
+        name="home"
         options={{
           title: 'Home',
           tabBarIcon: ({ focused }) => (
@@ -39,13 +39,13 @@ const DashboardLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="Repots"
+        name="Reports"
         options={{
           title: 'Reports',
           tabBarIcon: ({ focused }) => (
             <Ionicons
               size={24}
-              name={focused ? 'reports' : 'reports-outline'}
+              name={focused ? 'clipboard' : 'clipboard-outline'}
               color={focused ? theme.iconColorFocused : theme.iconColor}
             />
           ),
@@ -71,7 +71,7 @@ const DashboardLayout = () => {
           tabBarIcon: ({ focused }) => (
             <Ionicons
               size={24}
-              name={focused ? 'profile' : 'profile-outline'}
+              name={focused ? 'person' : 'person-outline'}
               color={focused ? theme.iconColorFocused : theme.iconColor}
             />
           ),

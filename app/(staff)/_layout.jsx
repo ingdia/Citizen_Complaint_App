@@ -4,7 +4,7 @@ import { Colors } from '../../constants/Colors'
 import { Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 
-const adminDashboard = () => {
+const staffDashboard = () => {
     const colorScheme = useColorScheme()
     const theme = Colors[colorScheme] ?? Colors.light
   return (
@@ -68,6 +68,6 @@ const adminDashboard = () => {
   )
 }
 
-export default adminDashboard
+export default staffDashboard
 
 const styles = StyleSheet.create({})

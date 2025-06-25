@@ -253,17 +253,18 @@ const HOME = () => {
             <Text style={styles.devText}>DEV</Text>
           </TouchableOpacity>
           <View style={styles.devLinks}>
-            <Link href="/admin" style={styles.devLink}>
+            <Link href="/AdminDashBoard" style={styles.devLink}>
               <Text style={styles.devLinkText}>Admin</Text>
             </Link>
-            <Link href="/profile" style={styles.devLink}>
-              <Text style={styles.devLinkText}>Profile</Text>
+            <Link href="/home" style={styles.devLink}>
+              <Text style={styles.devLinkText}>user</Text>
             </Link>
-            <Link href="/reports" style={styles.devLink}>
-              <Text style={styles.devLinkText}>Reports</Text>
+            <Link href="/staff" style={styles.devLink}>
+              <Text style={styles.devLinkText}>Staff</Text>
             </Link>
           </View>
         </View>
+        
       )}
     </View>
   )
