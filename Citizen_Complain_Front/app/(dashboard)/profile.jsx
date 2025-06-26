@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,22 +8,15 @@ import {
   Image,
   Alert,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  ActivityIndicator
 } from 'react-native';
 
 const profile = () => {
   const [activeTab, setActiveTab] = useState('profile');
-
-  // Mock user data
-  const userData = {
-    name: 'John Anderson',
-    email: 'john.anderson@email.com',
-    rating: 4.8,
-    memberSince: 2022,
-    reportsSubmitted: 24,
-    issuesResolved: 18,
-    inProgress: 6
-  };
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Mock activity data
   const recentActivity = [
@@ -52,6 +45,34 @@ const profile = () => {
       icon: '+'
     }
   ];
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+const response = await fetch("http://10.0.2.2:3000/users/me", {
+          method: "GET",
+          credentials: "include", // to include cookies if any
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        const data = await response.json();
+        setUserData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleReportNewIssue = () => {
     Alert.alert('Report New Issue', 'Redirecting to report form...');
@@ -92,159 +113,185 @@ const profile = () => {
     );
   };
 
-  const renderProfile = () => (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Text style={styles.iconText}>🔔</Text>
+  const renderProfile = () => {
+    if (loading) {
+      return (
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color="#3498DB" />
+        </View>
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
+          <Text style={{ color: 'red', fontSize: 16, textAlign: 'center' }}>{error}</Text>
+        </View>
+      );
+    }
+
+    if (!userData) {
+      return (
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
+          <Text style={{ fontSize: 16, textAlign: 'center' }}>No user data available.</Text>
+        </View>
+      );
+    }
+
+    return (
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <View style={styles.headerIcons}>
+            <TouchableOpacity style={styles.iconButton}>
+              <Text style={styles.iconText}>🔔</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Text style={styles.iconText}>⚙️</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Profile Section */}
+        <View style={styles.profileSection}>
+          <View style={styles.profileImageContainer}>
+            <Image
+              source={{ uri: userData.profileImage || 'https://via.placeholder.com/80x80/4A90E2/FFFFFF?text=User' }}
+              style={styles.profileImage}
+            />
+            <View style={styles.verifiedBadge}>
+              <Text style={styles.verifiedIcon}>✓</Text>
+            </View>
+          </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>{userData.name || userData.email}</Text>
+            <Text style={styles.profileEmail}>{userData.email}</Text>
+            <View style={styles.profileStats}>
+              <View style={styles.ratingContainer}>
+                <Text style={styles.starIcon}>⭐</Text>
+                <Text style={styles.rating}>{userData.rating ?? 'N/A'} Rating</Text>
+              </View>
+              <View style={styles.memberSince}>
+                <Text style={styles.calendarIcon}>📅</Text>
+                <Text style={styles.memberText}>Since {userData.memberSince ?? 'N/A'}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Stats Cards */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <Text style={styles.statNumber}>{userData.reportsSubmitted ?? 0}</Text>
+            <Text style={styles.statLabel}>Reports{'\n'}Submitted</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={[styles.statNumber, { color: '#27AE60' }]}>{userData.issuesResolved ?? 0}</Text>
+            <Text style={styles.statLabel}>Issues{'\n'}Resolved</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={[styles.statNumber, { color: '#E67E22' }]}>{userData.inProgress ?? 0}</Text>
+            <Text style={styles.statLabel}>In Progress</Text>
+          </View>
+        </View>
+
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <TouchableOpacity style={styles.actionItem} onPress={handleReportNewIssue}>
+            <View style={styles.actionIcon}>
+              <Text style={styles.actionIconText}>+</Text>
+            </View>
+            <Text style={styles.actionText}>Report New Issue</Text>
+            <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Text style={styles.iconText}>⚙️</Text>
+          
+          <TouchableOpacity style={styles.actionItem} onPress={handleMyReports}>
+            <View style={[styles.actionIcon, { backgroundColor: '#27AE60' }]}>
+              <Text style={styles.actionIconText}>📋</Text>
+            </View>
+            <Text style={styles.actionText}>My Reports</Text>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.actionItem} onPress={handleFavoriteLocations}>
+            <View style={[styles.actionIcon, { backgroundColor: '#9B59B6' }]}>
+              <Text style={styles.actionIconText}>💜</Text>
+            </View>
+            <Text style={styles.actionText}>Favorite Locations</Text>
+            <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Profile Section */}
-      <View style={styles.profileSection}>
-        <View style={styles.profileImageContainer}>
-          <Image
-            source={{ uri: 'https://via.placeholder.com/80x80/4A90E2/FFFFFF?text=JA' }}
-            style={styles.profileImage}
-          />
-          <View style={styles.verifiedBadge}>
-            <Text style={styles.verifiedIcon}>✓</Text>
-          </View>
-        </View>
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>{userData.name}</Text>
-          <Text style={styles.profileEmail}>{userData.email}</Text>
-          <View style={styles.profileStats}>
-            <View style={styles.ratingContainer}>
-              <Text style={styles.starIcon}>⭐</Text>
-              <Text style={styles.rating}>{userData.rating} Rating</Text>
+        {/* Recent Activity */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Recent Activity</Text>
+          {recentActivity.map((activity) => (
+            <View key={activity.id} style={styles.activityItem}>
+              <View style={[
+                styles.activityIcon,
+                { backgroundColor: activity.status === 'resolved' ? '#27AE60' : 
+                                 activity.status === 'progress' ? '#F39C12' : '#3498DB' }
+              ]}>
+                <Text style={styles.activityIconText}>{activity.icon}</Text>
+              </View>
+              <View style={styles.activityContent}>
+                <Text style={styles.activityTitle}>{activity.title}</Text>
+                <Text style={styles.activityDescription}>{activity.description}</Text>
+                <Text style={styles.activityTime}>{activity.time}</Text>
+              </View>
             </View>
-            <View style={styles.memberSince}>
-              <Text style={styles.calendarIcon}>📅</Text>
-              <Text style={styles.memberText}>Since {userData.memberSince}</Text>
+          ))}
+        </View>
+
+        {/* Settings */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Settings</Text>
+          
+          <TouchableOpacity style={styles.settingItem} onPress={handleNotifications}>
+            <View style={styles.settingIcon}>
+              <Text style={styles.settingIconText}>🔔</Text>
             </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Stats Cards */}
-      <View style={styles.statsContainer}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{userData.reportsSubmitted}</Text>
-          <Text style={styles.statLabel}>Reports{'\n'}Submitted</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={[styles.statNumber, { color: '#27AE60' }]}>{userData.issuesResolved}</Text>
-          <Text style={styles.statLabel}>Issues{'\n'}Resolved</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={[styles.statNumber, { color: '#E67E22' }]}>{userData.inProgress}</Text>
-          <Text style={styles.statLabel}>In Progress</Text>
-        </View>
-      </View>
-
-      {/* Quick Actions */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <TouchableOpacity style={styles.actionItem} onPress={handleReportNewIssue}>
-          <View style={styles.actionIcon}>
-            <Text style={styles.actionIconText}>+</Text>
-          </View>
-          <Text style={styles.actionText}>Report New Issue</Text>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.actionItem} onPress={handleMyReports}>
-          <View style={[styles.actionIcon, { backgroundColor: '#27AE60' }]}>
-            <Text style={styles.actionIconText}>📋</Text>
-          </View>
-          <Text style={styles.actionText}>My Reports</Text>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.actionItem} onPress={handleFavoriteLocations}>
-          <View style={[styles.actionIcon, { backgroundColor: '#9B59B6' }]}>
-            <Text style={styles.actionIconText}>💜</Text>
-          </View>
-          <Text style={styles.actionText}>Favorite Locations</Text>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Recent Activity */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Recent Activity</Text>
-        {recentActivity.map((activity) => (
-          <View key={activity.id} style={styles.activityItem}>
-            <View style={[
-              styles.activityIcon,
-              { backgroundColor: activity.status === 'resolved' ? '#27AE60' : 
-                               activity.status === 'progress' ? '#F39C12' : '#3498DB' }
-            ]}>
-              <Text style={styles.activityIconText}>{activity.icon}</Text>
+            <Text style={styles.settingText}>Notifications</Text>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.settingItem} onPress={handlePrivacySecurity}>
+            <View style={styles.settingIcon}>
+              <Text style={styles.settingIconText}>🔒</Text>
             </View>
-            <View style={styles.activityContent}>
-              <Text style={styles.activityTitle}>{activity.title}</Text>
-              <Text style={styles.activityDescription}>{activity.description}</Text>
-              <Text style={styles.activityTime}>{activity.time}</Text>
+            <Text style={styles.settingText}>Privacy & Security</Text>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.settingItem} onPress={handleHelpSupport}>
+            <View style={styles.settingIcon}>
+              <Text style={styles.settingIconText}>❓</Text>
             </View>
-          </View>
-        ))}
-      </View>
-
-      {/* Settings */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Settings</Text>
-        
-        <TouchableOpacity style={styles.settingItem} onPress={handleNotifications}>
-          <View style={styles.settingIcon}>
-            <Text style={styles.settingIconText}>🔔</Text>
-          </View>
-          <Text style={styles.settingText}>Notifications</Text>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.settingItem} onPress={handlePrivacySecurity}>
-          <View style={styles.settingIcon}>
-            <Text style={styles.settingIconText}>🔒</Text>
-          </View>
-          <Text style={styles.settingText}>Privacy & Security</Text>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.settingItem} onPress={handleHelpSupport}>
-          <View style={styles.settingIcon}>
-            <Text style={styles.settingIconText}>❓</Text>
-          </View>
-          <Text style={styles.settingText}>Help & Support</Text>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.settingItem} onPress={handleAbout}>
-          <View style={styles.settingIcon}>
-            <Text style={styles.settingIconText}>ℹ️</Text>
-          </View>
-          <Text style={styles.settingText}>About</Text>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={[styles.settingItem, styles.signOutItem]} onPress={handleSignOut}>
-          <View style={[styles.settingIcon, { backgroundColor: '#E74C3C' }]}>
-            <Text style={styles.settingIconText}>🚪</Text>
-          </View>
-          <Text style={[styles.settingText, { color: '#E74C3C' }]}>Sign Out</Text>
-          <Text style={styles.chevron}>›</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
-  );
+            <Text style={styles.settingText}>Help & Support</Text>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.settingItem} onPress={handleAbout}>
+            <View style={styles.settingIcon}>
+              <Text style={styles.settingIconText}>ℹ️</Text>
+            </View>
+            <Text style={styles.settingText}>About</Text>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={[styles.settingItem, styles.signOutItem]} onPress={handleSignOut}>
+            <View style={[styles.settingIcon, { backgroundColor: '#E74C3C' }]}>
+              <Text style={styles.settingIconText}>🚪</Text>
+            </View>
+            <Text style={[styles.settingText, { color: '#E74C3C' }]}>Sign Out</Text>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
