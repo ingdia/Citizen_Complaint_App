@@ -179,7 +179,7 @@ export const createDepartment = async (
     const { name, description } = req.body;
     if (!name) throw new BadRequestError("Department name is required");
 
-    const existing = await prisma.department.findUnique({ where { name } });
+    const existing = await prisma.department.findUnique({ where: { name } });
     if (existing) throw new BadRequestError("Department already exists");
 
     const department = await prisma.department.create({
