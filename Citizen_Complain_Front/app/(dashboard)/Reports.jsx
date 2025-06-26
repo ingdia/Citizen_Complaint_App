@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
   StatusBar,
   SafeAreaView,
 } from 'react-native';
+import { Ionicons, MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 
 const Reports = () => {
   const [activeTab, setActiveTab] = useState('All');
@@ -29,7 +29,8 @@ const Reports = () => {
       date: 'Jan 15, 2024 at 2:30 PM',
       status: 'In Progress',
       views: 12,
-      icon: '🕳️',
+      iconName: 'construct',
+      iconSet: 'FontAwesome5',
       statusColor: '#FF9500',
     },
     {
@@ -38,7 +39,8 @@ const Reports = () => {
       date: 'Jan 14, 2024 at 9:15 AM',
       status: 'Resolved',
       views: 8,
-      icon: '🗑️',
+      iconName: 'delete',
+      iconSet: 'MaterialIcons',
       statusColor: '#34C759',
     },
     {
@@ -47,7 +49,8 @@ const Reports = () => {
       date: 'Jan 13, 2024 at 7:45 PM',
       status: 'Pending',
       views: 5,
-      icon: '💡',
+      iconName: 'lightbulb',
+      iconSet: 'Ionicons',
       statusColor: '#FF3B30',
     },
     {
@@ -56,7 +59,8 @@ const Reports = () => {
       date: 'Jan 12, 2024 at 11:20 AM',
       status: 'Resolved',
       views: 15,
-      icon: '🔊',
+      iconName: 'volume-high',
+      iconSet: 'Ionicons',
       statusColor: '#34C759',
     },
     {
@@ -65,7 +69,8 @@ const Reports = () => {
       date: 'Jan 11, 2024 at 4:10 PM',
       status: 'In Progress',
       views: 22,
-      icon: '🌳',
+      iconName: 'tree',
+      iconSet: 'FontAwesome5',
       statusColor: '#FF9500',
     },
     {
@@ -74,7 +79,8 @@ const Reports = () => {
       date: 'Jan 10, 2024 at 8:30 PM',
       status: 'Pending',
       views: 9,
-      icon: '🚗',
+      iconName: 'car',
+      iconSet: 'FontAwesome5',
       statusColor: '#FF3B30',
     },
   ];
@@ -85,18 +91,33 @@ const Reports = () => {
     ? reportsData 
     : reportsData.filter(report => report.status === activeTab);
 
+  const renderIcon = (iconSet, iconName, color, size = 20) => {
+    switch (iconSet) {
+      case 'Ionicons':
+        return <Ionicons name={iconName} size={size} color={color} />;
+      case 'MaterialIcons':
+        return <MaterialIcons name={iconName} size={size} color={color} />;
+      case 'FontAwesome5':
+        return <FontAwesome5 name={iconName} size={size} color={color} />;
+      case 'AntDesign':
+        return <AntDesign name={iconName} size={size} color={color} />;
+      default:
+        return null;
+    }
+  };
+
   const renderHeader = () => (
     <View style={styles.header}>
       <TouchableOpacity style={styles.backButton}>
-        <Text style={styles.backArrow}>←</Text>
+        {renderIcon('Ionicons', 'arrow-back', '#333', 20)}
       </TouchableOpacity>
       <Text style={styles.headerTitle}>My Reports</Text>
       <View style={styles.headerActions}>
         <TouchableOpacity style={styles.searchButton}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          {renderIcon('Ionicons', 'search', '#666', 16)}
         </TouchableOpacity>
         <TouchableOpacity style={styles.filterButton}>
-          <Text style={styles.filterIcon}>⚡</Text>
+          {renderIcon('MaterialIcons', 'filter-list', '#666', 16)}
         </TouchableOpacity>
       </View>
     </View>
@@ -142,7 +163,7 @@ const Reports = () => {
   const renderReportItem = (report) => (
     <View key={report.id} style={styles.reportItem}>
       <View style={styles.reportIcon}>
-        <Text style={styles.iconText}>{report.icon}</Text>
+        {renderIcon(report.iconSet, report.iconName, '#666', 20)}
       </View>
       <View style={styles.reportContent}>
         <Text style={styles.reportTitle}>{report.title}</Text>
@@ -158,13 +179,13 @@ const Reports = () => {
             <Text style={styles.statusText}>{report.status}</Text>
           </View>
           <View style={styles.viewsContainer}>
-            <Text style={styles.viewsIcon}>👁️</Text>
+            {renderIcon('Ionicons', 'eye', '#666', 12)}
             <Text style={styles.viewsText}>{report.views} views</Text>
           </View>
         </View>
       </View>
       <TouchableOpacity style={styles.moreButton}>
-        <Text style={styles.moreIcon}>⋯</Text>
+        {renderIcon('AntDesign', 'ellipsis1', '#666', 16)}
       </TouchableOpacity>
     </View>
   );
@@ -176,7 +197,7 @@ const Reports = () => {
         onPress={() => setCurrentPage(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
       >
-        <Text style={styles.paginationArrow}>‹</Text>
+        {renderIcon('Ionicons', 'chevron-back', '#333', 16)}
       </TouchableOpacity>
       
       <Text style={styles.paginationText}>
@@ -188,7 +209,7 @@ const Reports = () => {
         onPress={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
       >
-        <Text style={styles.paginationArrow}>›</Text>
+        {renderIcon('Ionicons', 'chevron-forward', '#333', 16)}
       </TouchableOpacity>
     </View>
   );

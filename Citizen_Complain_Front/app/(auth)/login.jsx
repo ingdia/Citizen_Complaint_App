@@ -39,10 +39,26 @@ const Login = () => {
       Alert.alert('Validation Error', 'Please enter both email and password');
       return;
     }
-
+  
     setIsLoading(true);
     try {
-      await login(email, password);
+      const response = await fetch('http://10.0.2.2:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+  
+      // Example: Save token if your backend returns one
+      // await AsyncStorage.setItem('token', data.token);
+  
       Alert.alert('Success', 'You are now logged in!');
       router.replace('/home');
     } catch (error) {
@@ -51,7 +67,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

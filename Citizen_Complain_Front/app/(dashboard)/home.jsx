@@ -5,37 +5,40 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  Image,
   SafeAreaView,
 } from 'react-native';
-
+import { Ionicons, MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 const Home = () => {
   const reportCategories = [
     {
       id: 1,
       title: 'Potholes',
-      icon: '🚧',
+      iconName: 'construct',
+      iconSet: 'FontAwesome5',
       color: '#FFE6E6',
       iconColor: '#FF4444',
     },
     {
       id: 2,
       title: 'Garbage',
-      icon: '🗑️',
+      iconName: 'delete',
+      iconSet: 'MaterialIcons',
       color: '#E6F7E6',
       iconColor: '#22C55E',
     },
     {
       id: 3,
       title: 'Street Lights',
-      icon: '💡',
+      iconName: 'lightbulb',
+      iconSet: 'Ionicons',
       color: '#FFF7E6',
       iconColor: '#F59E0B',
     },
     {
       id: 4,
       title: 'Police',
-      icon: '🛡️',
+      iconName: 'shield-alt',
+      iconSet: 'FontAwesome5',
       color: '#E6F0FF',
       iconColor: '#3B82F6',
     },
@@ -47,7 +50,8 @@ const Home = () => {
       title: 'Large pothole on Main St',
       status: 'In Progress',
       statusColor: '#F59E0B',
-      icon: '🚧',
+      iconName: 'construct',
+      iconSet: 'FontAwesome5',
       iconColor: '#FF4444',
     },
     {
@@ -56,7 +60,8 @@ const Home = () => {
       status: 'Resolved',
       statusColor: '#22C55E',
       time: '5 hours ago',
-      icon: '🗑️',
+      iconName: 'delete',
+      iconSet: 'MaterialIcons',
       iconColor: '#22C55E',
     },
     {
@@ -65,7 +70,8 @@ const Home = () => {
       status: 'Pending',
       statusColor: '#EF4444',
       time: '1 day ago',
-      icon: '💡',
+      iconName: 'lightbulb',
+      iconSet: 'Ionicons',
       iconColor: '#F59E0B',
     },
   ];
@@ -76,6 +82,21 @@ const Home = () => {
     { label: 'In Progress', value: '33', color: '#F59E0B' },
   ];
 
+  const renderIcon = (iconSet, iconName, color, size = 24) => {
+    switch (iconSet) {
+      case 'Ionicons':
+        return <Ionicons name={iconName} size={size} color={color} />;
+      case 'MaterialIcons':
+        return <MaterialIcons name={iconName} size={size} color={color} />;
+      case 'FontAwesome5':
+        return <FontAwesome5 name={iconName} size={size} color={color} />;
+      case 'AntDesign':
+        return <AntDesign name={iconName} size={size} color={color} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -83,13 +104,13 @@ const Home = () => {
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <View style={styles.logoContainer}>
-              <Text style={styles.logoIcon}>📋</Text>
+              {renderIcon('FontAwesome5', 'clipboard-list', '#FFFFFF', 20)}
             </View>
             <Text style={styles.appName}>CitizenReport</Text>
           </View>
           <View style={styles.headerRight}>
             <TouchableOpacity style={styles.notificationButton}>
-              <Text style={styles.notificationIcon}>🔔</Text>
+              {renderIcon('Ionicons', 'notifications', '#000000', 20)}
             </TouchableOpacity>
             <TouchableOpacity style={styles.profileContainer}>
               <View style={styles.profileImage}>
@@ -108,9 +129,9 @@ const Home = () => {
                 key={category.id}
                 style={[styles.categoryCard, { backgroundColor: category.color }]}
               >
-                <Text style={[styles.categoryIcon, { color: category.iconColor }]}>
-                  {category.icon}
-                </Text>
+                <View style={{ marginBottom: 8 }}>
+                  {renderIcon(category.iconSet, category.iconName, category.iconColor, 28)}
+                </View>
                 <Text style={[styles.categoryTitle, { color: category.iconColor }]}>
                   {category.title}
                 </Text>
@@ -132,9 +153,7 @@ const Home = () => {
               <TouchableOpacity key={report.id} style={styles.reportCard}>
                 <View style={styles.reportLeft}>
                   <View style={styles.reportIconContainer}>
-                    <Text style={[styles.reportIcon, { color: report.iconColor }]}>
-                      {report.icon}
-                    </Text>
+                    {renderIcon(report.iconSet, report.iconName, report.iconColor, 18)}
                   </View>
                   <View style={styles.reportContent}>
                     <Text style={styles.reportTitle}>{report.title}</Text>
@@ -178,7 +197,7 @@ const Home = () => {
 
         {/* Emergency Report Button */}
         <TouchableOpacity style={styles.emergencyButton}>
-          <Text style={styles.emergencyIcon}>⚠️</Text>
+          {renderIcon('AntDesign', 'warning', '#FFFFFF', 20)}
           <Text style={styles.emergencyText}>Report Emergency</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -223,10 +242,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 12,
   },
-  logoIcon: {
-    fontSize: 20,
-    color: '#FFFFFF',
-  },
   appName: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -239,9 +254,6 @@ const styles = StyleSheet.create({
   notificationButton: {
     marginRight: 16,
     padding: 8,
-  },
-  notificationIcon: {
-    fontSize: 20,
   },
   profileContainer: {
     width: 40,
@@ -303,10 +315,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  categoryIcon: {
-    fontSize: 28,
-    marginBottom: 8,
-  },
   categoryTitle: {
     fontSize: 16,
     fontWeight: '600',
@@ -345,9 +353,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
-  },
-  reportIcon: {
-    fontSize: 18,
   },
   reportContent: {
     flex: 1,
@@ -415,10 +420,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3.84,
     elevation: 5,
-  },
-  emergencyIcon: {
-    fontSize: 20,
-    marginRight: 8,
   },
   emergencyText: {
     color: '#FFFFFF',

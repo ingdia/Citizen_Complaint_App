@@ -31,19 +31,16 @@ const HOME = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="white" />
-      
+
       {/* Animated Background */}
       <View style={styles.backgroundContainer}>
         <LinearGradient
-          colors={['white', 'white', '#c2e8ff']}
+          colors={["white", "white", "#c2e8ff"]}
           style={styles.backgroundGradient}
         />
-        
-       
-      
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         bounces={true}
@@ -52,25 +49,26 @@ const HOME = () => {
         {/* Skip Button */}
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.skipButton}>
+            <Ionicons name="close" size={20} color="gray" style={{ marginRight: 6 }} />
             <Text style={styles.skipText}>Skip</Text>
           </TouchableOpacity>
         </View>
 
         {/* Hero Section */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.heroSection,
             {
               opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
+              transform: [{ translateY: slideAnim }],
+            },
           ]}
         >
           {/* App Icon with Glow Effect */}
           <View style={styles.appIconContainer}>
             <View style={styles.iconGlow}>
               <LinearGradient
-                colors={['#00d2ff', '#3a7bd5']}
+                colors={["#00d2ff", "#3a7bd5"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.appIcon}
@@ -79,50 +77,48 @@ const HOME = () => {
               </LinearGradient>
             </View>
           </View>
-          
+
           <Spacer height={30} />
-          
+
           {/* Title with Enhanced Typography */}
           <View style={styles.titleContainer}>
             <Text style={styles.welcomeText}>Welcome to</Text>
             <LinearGradient
-              colors={['#00d2ff', '#3a7bd5']}
+              colors={["#00d2ff", "#3a7bd5"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.titleGradient}
             >
               <Text style={styles.mainTitle}>CitizenReport</Text>
             </LinearGradient>
-            
+
             <Spacer height={20} />
-            
+
             <Text style={styles.description}>
-              Transform your community with the power of your voice. 
-              Report issues, track progress, and make a real difference 
-              in your neighborhood.
+              Transform your community with the power of your voice. Report
+              issues, track progress, and make a real difference in your
+              neighborhood.
             </Text>
           </View>
         </Animated.View>
 
         {/* Statistics Section */}
-        <Animated.View 
-          style={[
-            styles.statsSection,
-            { opacity: fadeAnim }
-          ]}
-        >
+        <Animated.View style={[styles.statsSection, { opacity: fadeAnim }]}>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
+              <Ionicons name="file-text" size={24} color="#00d2ff" style={{ marginBottom: 4 }} />
               <Text style={styles.statNumber}>10K+</Text>
               <Text style={styles.statLabel}>Reports Filed</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
+              <Ionicons name="checkmark-circle" size={24} color="#00d2ff" style={{ marginBottom: 4 }} />
               <Text style={styles.statNumber}>85%</Text>
               <Text style={styles.statLabel}>Issues Resolved</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
+              <Ionicons name="business" size={24} color="#00d2ff" style={{ marginBottom: 4 }} />
               <Text style={styles.statNumber}>50+</Text>
               <Text style={styles.statLabel}>Cities</Text>
             </View>
@@ -132,12 +128,12 @@ const HOME = () => {
         {/* Features Section with Enhanced Cards */}
         <View style={styles.featuresSection}>
           <Text style={styles.sectionTitle}>Why Choose CitizenReport?</Text>
-          
+
           <Spacer height={24} />
-          
+
           <View style={styles.featureItem}>
             <LinearGradient
-              colors={['#ff9a9e', '#fecfef']}
+              colors={["#ff9a9e", "#fecfef"]}
               style={styles.featureIconGradient}
             >
               <Ionicons name="camera" size={28} color="#FFFFFF" />
@@ -149,10 +145,10 @@ const HOME = () => {
               </Text>
             </View>
           </View>
-          
+
           <View style={styles.featureItem}>
             <LinearGradient
-              colors={['#a8edea', '#fed6e3']}
+              colors={["#a8edea", "#fed6e3"]}
               style={styles.featureIconGradient}
             >
               <Ionicons name="location" size={28} color="#FFFFFF" />
@@ -164,10 +160,10 @@ const HOME = () => {
               </Text>
             </View>
           </View>
-          
+
           <View style={styles.featureItem}>
             <LinearGradient
-              colors={['#ffecd2', '#fcb69f']}
+              colors={["#ffecd2", "#fcb69f"]}
               style={styles.featureIconGradient}
             >
               <MaterialIcons name="update" size={28} color="#FFFFFF" />
@@ -175,14 +171,15 @@ const HOME = () => {
             <View style={styles.featureContent}>
               <Text style={styles.featureTitle}>Live Tracking</Text>
               <Text style={styles.featureDescription}>
-                Get real-time updates on your report status and resolution progress
+                Get real-time updates on your report status and resolution
+                progress
               </Text>
             </View>
           </View>
 
           <View style={styles.featureItem}>
             <LinearGradient
-              colors={['#a8c8ec', '#7d8dc1']}
+              colors={["#a8c8ec", "#7d8dc1"]}
               style={styles.featureIconGradient}
             >
               <AntDesign name="team" size={28} color="#FFFFFF" />
@@ -202,28 +199,35 @@ const HOME = () => {
           <Text style={styles.ctaSubtitle}>
             Join the movement of active citizens improving their communities
           </Text>
-          
+
           <Spacer height={32} />
-          
+
           <Link href="/register" asChild>
             <TouchableOpacity style={styles.primaryButton}>
               <LinearGradient
-                colors={['#00d2ff', '#3a7bd5']}
+                colors={["#00d2ff", "#3a7bd5"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradientButton}
               >
                 <Text style={styles.primaryButtonText}>Get Started Free</Text>
-                <AntDesign name="arrowright" size={20} color="#FFFFFF" style={styles.buttonIcon} />
+                <AntDesign
+                  name="arrowright"
+                  size={20}
+                  color="#FFFFFF"
+                  style={styles.buttonIcon}
+                />
               </LinearGradient>
             </TouchableOpacity>
           </Link>
-          
+
           <Spacer height={16} />
-          
+
           <Link href="/login" asChild>
             <TouchableOpacity style={styles.secondaryButton}>
-              <Text style={styles.secondaryButtonText}>Already have an account?</Text>
+              <Text style={styles.secondaryButtonText}>
+                Already have an account?
+              </Text>
             </TouchableOpacity>
           </Link>
         </View>
@@ -231,43 +235,48 @@ const HOME = () => {
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.termsText}>
-            By continuing, you agree to our{' '}
-            <Text style={styles.linkText}>Terms of Service</Text> and{' '}
+            By continuing, you agree to our{" "}
+            <Text style={styles.linkText}>Terms of Service</Text> and{" "}
             <Text style={styles.linkText}>Privacy Policy</Text>
           </Text>
-          
+
           <Spacer height={20} />
-          
+
           <Text style={styles.copyrightText}>
-            © 2024 CitizenReport. Making communities better, one report at a time.
+            © 2024 CitizenReport. Making communities better, one report at a
+            time.
           </Text>
         </View>
 
         <Spacer height={40} />
       </ScrollView>
 
-     
       {__DEV__ && (
         <View style={styles.devPanel}>
-          <TouchableOpacity style={styles.devToggle}>
-            <Text style={styles.devText}>DEV</Text>
-          </TouchableOpacity>
+          <SafeAreaView>
+            <TouchableOpacity style={styles.devToggle}>
+              <Text style={styles.devText}>DEV</Text>
+            </TouchableOpacity>
           <View style={styles.devLinks}>
-            <Link href="/AdminDashBoard" style={styles.devLink}>
-              <Text style={styles.devLinkText}>Admin</Text>
-            </Link>
-            <Link href="/home" style={styles.devLink}>
-              <Text style={styles.devLinkText}>user</Text>
-            </Link>
-            <Link href="/staff" style={styles.devLink}>
-              <Text style={styles.devLinkText}>Staff</Text>
-            </Link>
-          </View>
+              <Link href="/AdminDashBoard" style={styles.devLink}>
+                <Ionicons name="settings" size={16} color="white" style={{ marginRight: 4 }} />
+                <Text style={styles.devLinkText}>Admin</Text>
+              </Link>
+              <Link href="/home" style={styles.devLink}>
+                <Ionicons name="person" size={16} color="white" style={{ marginRight: 4 }} />
+                <Text style={styles.devLinkText}>user</Text>
+              </Link>
+              <Link href="/staff" style={styles.devLink}>
+                <Ionicons name="people" size={16} color="white" style={{ marginRight: 4 }} />
+                <Text style={styles.devLinkText}>Staff</Text>
+              </Link>
+            </View>
+            <Spacer/>
+          </SafeAreaView>
         </View>
-        
       )}
     </View>
-  )
+  );
 }
 
 export default HOME

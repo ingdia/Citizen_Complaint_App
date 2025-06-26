@@ -26,49 +26,52 @@ import { useUser } from '../hooks/useUser';
 const { width, height } = Dimensions.get('window');
 
 const SignUp = () => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const { register } = useUser();
+  const API_URL = "http://10.0.2.2:3000"; // or your IP if using a real device
 
   const validateForm = () => {
     if (!fullName.trim()) {
-      Alert.alert('Validation Error', 'Please enter your full name');
+      Alert.alert("Validation Error", "Please enter your full name");
       return false;
     }
     if (!email.trim()) {
-      Alert.alert('Validation Error', 'Please enter your email');
+      Alert.alert("Validation Error", "Please enter your email");
       return false;
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      Alert.alert('Validation Error', 'Please enter a valid email address');
+      Alert.alert("Validation Error", "Please enter a valid email address");
       return false;
     }
 
     if (!password) {
-      Alert.alert('Validation Error', 'Please enter a password');
+      Alert.alert("Validation Error", "Please enter a password");
       return false;
     }
     if (password.length < 6) {
-      Alert.alert('Validation Error', 'Password must be at least 6 characters');
+      Alert.alert("Validation Error", "Password must be at least 6 characters");
       return false;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Validation Error', 'Passwords do not match');
+      Alert.alert("Validation Error", "Passwords do not match");
       return false;
     }
     if (!agreeToTerms) {
-      Alert.alert('Validation Error', 'Please agree to the terms and conditions');
+      Alert.alert(
+        "Validation Error",
+        "Please agree to the terms and conditions"
+      );
       return false;
     }
     return true;
@@ -78,41 +81,63 @@ const SignUp = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
+
     try {
-      // FIXED: Correct parameter order (email, password, name)
-      await register(email.trim(), password, fullName.trim());
-      Alert.alert('Success', 'Account created successfully!', [
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: fullName.trim(),
+          email: email.trim(),
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
+
+      Alert.alert("Success", "Account created successfully!", [
         {
-          text: 'OK',
-          onPress: () => router.replace('/login')
-        }
+          text: "OK",
+          onPress: () => router.replace("/login"),
+        },
       ]);
     } catch (error) {
-      console.error('Registration error:', error);
-      Alert.alert('Registration Failed', error.message);
+      console.error("Registration error:", error);
+      Alert.alert(
+        "Registration Failed",
+        error.message || "Something went wrong"
+      );
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>       
-       
+      <View style={styles.container}>
         <View style={[styles.circle, styles.circle1]} />
         <View style={[styles.circle, styles.circle2]} />
         <View style={[styles.circle, styles.circle3]} />
-        
-        <ScrollView 
+
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
           {/* Back Button */}
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
             <Ionicons name="arrow-back" size={24} color="#55acbf" />
           </TouchableOpacity>
 
-        
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <Text style={styles.createAccountText}>Create Account</Text>
@@ -126,7 +151,12 @@ const SignUp = () => {
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Full Name</Text>
                 <View style={styles.inputWrapper}>
-                  <Ionicons name="person-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+                  <Ionicons
+                    name="person-outline"
+                    size={20}
+                    color="#9CA3AF"
+                    style={styles.inputIcon}
+                  />
                   <ThemedTextInput
                     style={styles.textInput}
                     placeholder="Enter your full name"
@@ -145,7 +175,12 @@ const SignUp = () => {
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Email Address</Text>
                 <View style={styles.inputWrapper}>
-                  <Ionicons name="mail-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+                  <Ionicons
+                    name="mail-outline"
+                    size={20}
+                    color="#9CA3AF"
+                    style={styles.inputIcon}
+                  />
                   <ThemedTextInput
                     style={styles.textInput}
                     placeholder="Enter your email address"
@@ -164,7 +199,12 @@ const SignUp = () => {
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Password</Text>
                 <View style={styles.inputWrapper}>
-                  <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={20}
+                    color="#9CA3AF"
+                    style={styles.inputIcon}
+                  />
                   <ThemedTextInput
                     style={styles.textInput}
                     placeholder="Create a password"
@@ -176,14 +216,14 @@ const SignUp = () => {
                     autoComplete="password-new"
                     placeholderTextColor="#9CA3AF"
                   />
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     onPress={() => setShowPassword(!showPassword)}
                     style={styles.eyeIcon}
                   >
-                    <Ionicons 
-                      name={showPassword ? "eye-off-outline" : "eye-outline"} 
-                      size={20} 
-                      color="#9CA3AF" 
+                    <Ionicons
+                      name={showPassword ? "eye-off-outline" : "eye-outline"}
+                      size={20}
+                      color="#9CA3AF"
                     />
                   </TouchableOpacity>
                 </View>
@@ -193,7 +233,12 @@ const SignUp = () => {
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Confirm Password</Text>
                 <View style={styles.inputWrapper}>
-                  <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={20}
+                    color="#9CA3AF"
+                    style={styles.inputIcon}
+                  />
                   <ThemedTextInput
                     style={styles.textInput}
                     placeholder="Confirm your password"
@@ -205,51 +250,60 @@ const SignUp = () => {
                     autoComplete="password-new"
                     placeholderTextColor="#9CA3AF"
                   />
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                     style={styles.eyeIcon}
                   >
-                    <Ionicons 
-                      name={showConfirmPassword ? "eye-off-outline" : "eye-outline"} 
-                      size={20} 
-                      color="#9CA3AF" 
+                    <Ionicons
+                      name={
+                        showConfirmPassword ? "eye-off-outline" : "eye-outline"
+                      }
+                      size={20}
+                      color="#9CA3AF"
                     />
                   </TouchableOpacity>
                 </View>
               </View>
 
               {/* Terms and Conditions */}
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.termsContainer}
                 onPress={() => setAgreeToTerms(!agreeToTerms)}
               >
-                <View style={[styles.checkbox, agreeToTerms && styles.checkboxChecked]}>
+                <View
+                  style={[
+                    styles.checkbox,
+                    agreeToTerms && styles.checkboxChecked,
+                  ]}
+                >
                   {agreeToTerms && (
                     <Ionicons name="checkmark" size={14} color="white" />
                   )}
                 </View>
                 <Text style={styles.termsText}>
-                  I agree to the{' '}
-                  <Text style={styles.termsLink}>Terms & Conditions</Text>
-                  {' '}and{' '}
+                  I agree to the{" "}
+                  <Text style={styles.termsLink}>Terms & Conditions</Text> and{" "}
                   <Text style={styles.termsLink}>Privacy Policy</Text>
                 </Text>
               </TouchableOpacity>
 
               {/* Sign Up Button */}
-              <TouchableOpacity 
-                style={[styles.signUpButton, isLoading && styles.buttonDisabled]}
+              <TouchableOpacity
+                style={[
+                  styles.signUpButton,
+                  isLoading && styles.buttonDisabled,
+                ]}
                 onPress={handleSubmit}
                 disabled={isLoading}
               >
                 <LinearGradient
-                  colors={['#96dfe8', '#55acbf']}
+                  colors={["#96dfe8", "#55acbf"]}
                   style={styles.buttonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                 >
                   <Text style={styles.signUpButtonText}>
-                    {isLoading ? 'Creating Account...' : 'Create Account'}
+                    {isLoading ? "Creating Account..." : "Create Account"}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
