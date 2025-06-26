@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  STAFF
+  SUPER_ADMIN
+}
+
+enum ReportStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum ReportCategory {
+  POTHOLE
+  GARBAGE
+  STREET_LIGHT
+  POLICE
+  OTHER
+}
+
+model User {
+  id             Int        @id @default(autoincrement())
+  name           String
+  email          String     @unique
+  password       String
+  role           Role       @default(USER)
+  isActive       Boolean    @default(true)
+  isEmailVerified Boolean   @default(true)
+  department     Department? @relation(fields: [departmentId], references: [id])
+  departmentId   Int?
+  reports        Report[]   // User-submitted reports
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Department {
+  id             Int        @id @default(autoincrement())
+  name           String
+  description    String?
+  users          User[]
+  reports        Report[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Report {
+  id             Int            @id @default(autoincrement())
+  title          String
+  description    String
+  category       ReportCategory
+  status         ReportStatus   @default(PENDING)
+  latitude       Float
+  longitude      Float
+  photoUrl       String?
+  videoUrl       String?
+  user           User           @relation(fields: [userId], references: [id])
+  userId         Int
+  department     Department?    @relation(fields: [departmentId], references: [id])
+  departmentId   Int?
+  contactEmail   String?
+  contactPhone   String?
+  response       String?
+
+  assignedTo     User?          @relation(\"AssignedReports\", fields: [assignedToId], references: [id])
+  assignedToId   Int?
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
